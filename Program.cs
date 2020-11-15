@@ -21,6 +21,66 @@ namespace laboratory7
         {
             return $"Data: {Data}";
         }
+        public override bool Equals(object obj)
+        {
+            Node oj = obj as Node;
+            if(oj != null && oj.Data == this.Data)
+            {
+                if(oj.Left == null && this.Left == null && oj.Right == null && this.Right == null)
+                {
+                    return true;
+                }
+                if (oj.Left == null && this.Left == null)
+                {
+                    if (oj.Right != null && this.Right != null)
+                    {
+                        if (oj.Right.Data == this.Right.Data)
+                        {
+                            return true;
+                        }
+                    }
+                }
+                if(oj.Right == null && this.Right == null)
+                {
+                    if(oj.Left != null && this.Left != null)
+                    {
+                        if(oj.Left.Data == this.Left.Data)
+                        {
+                            return true;
+                        }
+                    }
+                }
+                if (oj.Left != null && this.Left != null && oj.Right != null && this.Right != null)
+                {
+                    if(oj.Left.Data == this.Left.Data && oj.Right.Data == this.Right.Data)
+                    {
+                        return true;
+                    }
+                }
+
+            }
+            return false;
+        }
+        public override int GetHashCode()
+        {
+            return this.ToString().GetHashCode();
+        }
+        public static bool operator ==(Node n1, Node n2)
+        {
+            if (object.ReferenceEquals(n1, null))
+            {
+                return object.ReferenceEquals(n2, null);
+            }
+            return n1.Equals(n2);
+        }
+        public static bool operator !=(Node n1, Node n2)
+        {
+            if (object.ReferenceEquals(n1, null))
+            {
+                return !object.ReferenceEquals(n2, null);
+            }
+            return !n1.Equals(n2);
+        }
     }
     public class BinaryTree
     {
@@ -117,24 +177,35 @@ namespace laboratory7
         }
         public Node FindPreOrder(Node parent, int key)
         {
-            if (findPreOrder(parent, key) == null)
+            findPreOrder(parent, key);
+            if (Parent == null)
             {
                 Console.WriteLine("Node is not found");
             }
-            return findPreOrder(parent, key);
+            return Parent;
         }
+        public Node Parent = null;
         private Node findPreOrder(Node parent, int key)
         {
             if (parent != null)
             {
                 if(parent.Data == key)
                 {
+                    Parent = parent;
                     return parent;
                 }
-                findPreOrder(parent.Left, key);
-                findPreOrder(parent.Right, key);
+                else
+                {
+                    findPreOrder(parent.Left, key);
+                    findPreOrder(parent.Right, key);
+                }
+                return parent;
             }
-            return null;
+            else
+            {
+                return null;
+            }
+            
         }
         /////////////////////////////////////////////////////////////////////////////////////////////////////////FIND BY KEY BACKWARDS postORDER/////
         public void TraversePostOrder(Node parent)
@@ -149,11 +220,12 @@ namespace laboratory7
         }
         public Node FindPostOrder(Node parent, int key)
         {
-            if (findPostOrder(parent, key) == null)
+            findPostOrder(parent, key);
+            if (Parent == null)
             {
                 Console.WriteLine("Node is not found");
             }
-            return findPostOrder(parent, key);
+            return Parent;
         }
         private Node findPostOrder(Node parent, int key)
         {
@@ -163,6 +235,7 @@ namespace laboratory7
                 findPostOrder(parent.Right, key);
                 if (parent.Data == key)
                 {
+                    Parent = parent;
                     return parent;
                 }
             }
@@ -207,7 +280,33 @@ namespace laboratory7
                 }
             }
             return node;
-        } 
+        }
+        //////////////////////////////////////////////////////////////////GET LEVEL OF NODE////////////////////////////////////////
+        private int getLevelUtil(Node root, Node searched, int level)
+        {
+            if (root == null)
+            {
+                return 0;
+            }
+
+            if (root == searched)
+            {
+                return level;
+            }
+
+            int downlevel = getLevelUtil(root.Left, searched, level + 1);
+            if (downlevel != 0)
+            {
+                return downlevel;
+            }
+
+            downlevel = getLevelUtil(root.Right, searched, level + 1);
+            return downlevel;
+        }
+        public int getLevel(Node node, Node searched)
+        {
+            return getLevelUtil(node, searched, 1);
+        }
     }
     public static class BTreePrinter
     {
@@ -330,7 +429,8 @@ namespace laboratory7
                         Console.WriteLine("enter value: ");
                         line = Console.ReadLine();
                         b = int.Parse(line);
-                        Console.WriteLine(tree.FindPreOrder(tree.Root, b));
+                        Node n = tree.FindPreOrder(tree.Root, b);
+                        Console.WriteLine(n + $" Level: {tree.getLevel(tree.Root, n)}");
                         break;
                     case 6:
                         tree.TraversePostOrder(tree.Root);
@@ -339,7 +439,8 @@ namespace laboratory7
                         Console.WriteLine("enter value: ");
                         line = Console.ReadLine();
                         b = int.Parse(line);
-                        Console.WriteLine(tree.FindPostOrder(tree.Root, b));
+                        Node n1 = tree.FindPostOrder(tree.Root, b);
+                        Console.WriteLine(n1 + $" Level: {tree.getLevel(tree.Root, n1)}");
                         break;
                     case 8:
                         Console.WriteLine(tree.FindMin());
