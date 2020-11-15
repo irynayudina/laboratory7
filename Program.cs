@@ -173,7 +173,6 @@ namespace laboratory7
                 TraversePreOrder(parent.Left);
                 TraversePreOrder(parent.Right);
             }
-            Console.WriteLine();
         }
         public Node FindPreOrder(Node parent, int key)
         {
@@ -216,7 +215,6 @@ namespace laboratory7
                 TraversePostOrder(parent.Right);
                 Console.Write(parent.Data + " ");
             }
-            Console.WriteLine();
         }
         public Node FindPostOrder(Node parent, int key)
         {
@@ -424,6 +422,7 @@ namespace laboratory7
                         break;
                     case 4:
                         tree.TraversePreOrder(tree.Root);
+                        Console.WriteLine();
                         break;
                     case 5:
                         Console.WriteLine("enter value: ");
@@ -434,6 +433,7 @@ namespace laboratory7
                         break;
                     case 6:
                         tree.TraversePostOrder(tree.Root);
+                        Console.WriteLine();
                         break;
                     case 7:
                         Console.WriteLine("enter value: ");
